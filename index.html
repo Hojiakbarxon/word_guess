@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guess Game</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>🎮 O'yin Qoidalari</h2>
+            <p>Siz men o'ylagan 5 harfli inglizcha so'zni, 6 urinishda topishingiz kerak.</p>
+            <div class="rule-item">
+                <span class="color-box green"></span>
+                <p>Agar harf va index mos bo'lsa, u yashil rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box yellow"></span>
+                <p>Agar harf so'zda bor, lekin index mos kelmasa, sariq rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box red"></span>
+                <p>Agar harf so'zda umuman bo'lmasa, qizil rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box gray"></span>    
+                <p>Agar katakcha bo'sh qoldirilsa, javobingiz qabul qilinmaydi, lekin urinishni davom eta olasiz</p>
+            </div>
+            <p class="start-text">Boshlanishiga xohlagan inglizcha so'zingizni kiriting, Good Luck! 🍀</p>
+        </div>
+    </div>
+
+    <section class="game">
+        <h1 class="title">O'yinga xush kelibsiz</h1>
+        <div class="button-container">
+            <button class="about">📖 O'yin haqida</button>
+            <button class="restart">🔄 Restart</button>
+        </div>
+        <div class="gamebar">
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+        </div>
+    </section>
+
+    <div id="endMessage" class="popup">
+        <span id="endText"></span>
+        <button id="closeBtn">OK</button>
+    </div>
+
+    <script src="./index.js"></script>
+</body>
+
+</html>

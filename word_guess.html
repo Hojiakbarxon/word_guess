@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Guess Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .about,
+        .restart {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            width: 180px;
+            height: 50px;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .about:hover,
+        .restart:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+        }
+
+        .about:active,
+        .restart:active {
+            transform: translateY(-1px);
+        }
+
+        .gamebar {
+            margin-top: 30px;
+            padding: 10px;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .letters {
+            aspect-ratio: 1;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .letters:not(:empty) {
+            animation: popIn 0.2s ease;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2d3561 0%, #1f2544 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            color: #ffd700;
+        }
+
+        .modal-content p {
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .color-box {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .color-box.green {
+            background-color: #28a745;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+        }
+
+        .color-box.yellow {
+            background-color: #ffc107;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+        }
+
+        .color-box.red {
+            background-color: #dc3545;
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.5);
+        }
+
+        .color-box.gray {
+            background-color: #6c757d;
+            box-shadow: 0 0 15px rgba(108, 117, 125, 0.5);
+        }
+
+        .start-text {
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffd700;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            transition: all 0.3s ease;
+            line-height: 1;
+            margin-top: -10px;
+        }
+
+        .close:hover {
+            color: #f5576c;
+            transform: rotate(90deg);
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 40px 45px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            min-width: 350px;
+            animation: popupBounce 0.5s ease;
+        }
+
+        @keyframes popupBounce {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .popup.loss {
+            border: 4px solid #FF3B30;
+            background: linear-gradient(135deg, #FFE5E0 0%, #FFD0CC 100%);
+            color: #B00000;
+        }
+
+        .popup.win {
+            border: 4px solid #4CAF50;
+            background: linear-gradient(135deg, #E0FFE0 0%, #C8F7C8 100%);
+            color: #006400;
+        }
+
+        .popup button {
+            margin-top: 25px;
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .popup button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .popup button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .about,
+            .restart {
+                width: 150px;
+                height: 45px;
+                font-size: 14px;
+            }
+
+            .letters {
+                font-size: 1.5rem;
+            }
+
+            .gamebar {
+                gap: 8px;
+            }
+
+            .modal-content {
+                padding: 25px;
+            }
+
+            .popup {
+                min-width: 300px;
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>🎮 O'yin Qoidalari</h2>
+            <p>Siz men o'ylagan 5 harfli inglizcha so'zni, 6 urinishda topishingiz kerak.</p>
+            <div class="rule-item">
+                <span class="color-box green"></span>
+                <p>Agar harf va index mos bo'lsa, u yashil rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box yellow"></span>
+                <p>Agar harf so'zda bor, lekin index mos kelmasa, sariq rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box red"></span>
+                <p>Agar harf so'zda umuman bo'lmasa, qizil rangda bo'ladi.</p>
+            </div>
+            <div class="rule-item">
+                <span class="color-box gray"></span>
+                <p>Agar katakcha bo'sh qoldirilsa, javobingiz qabul qilinmaydi, lekin urinishni davom eta olasiz</p>
+            </div>
+            <p class="start-text">Boshlanishiga xohlagan inglizcha so'zingizni kiriting, Good Luck! 🍀</p>
+        </div>
+    </div>
+
+    <section class="game">
+        <h1 class="title">O'yinga xush kelibsiz</h1>
+        <div class="button-container">
+            <button class="about">📖 O'yin haqida</button>
+            <button class="restart">🔄 Restart</button>
+        </div>
+        <div class="gamebar">
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+            <div class="letters"></div>
+        </div>
+    </section>
+
+    <div id="endMessage" class="popup">
+        <span id="endText"></span>
+        <button id="closeBtn">OK</button>
+    </div>
+
+    <script>
+        let words = [
+            "APPLE", "BREAD", "CHAIR", "TABLE", "HOUSE", "WATER", "LIGHT", "MONEY", "WORLD", "HEART",
+            "BRAIN", "STARS", "FLAME", "PLANT", "RIVER", "STONE", "GHOST", "SWORD", "CROWN", "DRINK",
+            "MUSIC", "TRUCK", "BERRY", "DREAM", "BUNNY", "GLASS", "SHEET", "PLATE", "SPOON", "HORSE",
+            "MONEY", "CLOUD", "PHONE", "CLOCK", "BRUSH", "TRAIN", "BEACH", "FIELD", "TRACK", "NURSE",
+            "EVENT", "TIGER", "DUCKS", "BERRY", "PRIDE", "SCALE", "GLOVE", "BLADE", "BRICK", "CANDY",
+            "FLUID", "HELMO", "HONEY", "MAPLE", "PEARL", "COINS", "CABIN", "CAMEL", "COAST", "FLOUR",
+            "FENCE", "GRAPE", "HOUSE", "HOUND", "JUICE", "KNIFE", "LUNCH", "MOUSE", "NAVEL", "OCEAN",
+            "PEACH", "PIZZA", "QUEEN", "QUILL", "RAILS", "RANCH", "ROBIN", "ROVER", "SCALE", "SHEEP",
+            "SHORE", "SHEET", "SLATE", "SMILE", "SNAKE", "SPOON", "STACK", "STAFF", "STALK", "STONE",
+            "STORM", "TABLE", "TIGER", "TRUNK", "UNCLE", "VAULT", "VENUE", "VIRUS", "WAGON", "WATCH",
+            "WHEAT", "WORLD", "YACHT", "YEAST", "ZEBRA", "ACORN", "ALBUM", "ANGEL", "ARROW", "ATLAS",
+            "BATCH", "BENCH", "BERRY", "BRAND", "BUNCH", "CABLE", "CANDY", "CATCH", "CHAIN", "CHART",
+            "CHEST", "CHILD", "CHOIR", "CIVIL", "CLAIM", "CLASS", "CLEAN", "CLEAR", "CLOCK", "CLOTH",
+            "COACH", "COAST", "COLOR", "COUNT", "COURT", "COVER", "CRAFT", "CRASH", "CREAM", "CREST",
+            "CRIME", "CROSS", "CROWN", "CURVE", "DAILY", "DANCE", "DEATH", "DEPTH", "DERBY", "DOZEN",
+            "DRAFT", "DRAMA", "DREAM", "DRESS", "DRINK", "DRIVE", "EARTH", "EIGHT", "ELDER", "ELITE",
+            "EMPTY", "ENEMY", "ENTER", "ENTRY", "ERROR", "EVENT", "EXACT", "EXIST", "EXTRA", "FAITH",
+            "FAULT", "FAVOR", "FEAST", "FIBER", "FIELD", "FINAL", "FLASH", "FLEET", "FLOOD", "FLOOR",
+            "FOCUS", "FORCE", "FRAME", "FRONT", "FRUIT", "FULLY", "FUNNY", "GIANT", "GIVEN", "GLASS",
+            "GLOBE", "GUARD", "GUESS", "GUEST", "HAPPY", "HARRY", "HEART", "HORSE", "HOUSE", "HOUND",
+            "INPUT", "JUDGE", "JUICE", "KNIFE", "LUNCH", "MAPLE", "MONEY", "MOUSE", "NAVEL", "NURSE",
+            "OCEAN", "PEACH", "PEARL", "PLANT", "PLATE", "PRIDE", "QUEEN", "QUILL", "RAILS", "RANCH",
+            "ROBIN", "ROVER", "SCALE", "SHEEP", "SHORE", "SHEET", "SLATE", "SMILE", "SNAKE", "SPOON",
+            "STACK", "STAFF", "STALK", "STONE", "STORM", "TABLE", "TIGER", "TRUCK", "TRUNK", "UNCLE",
+            "VAULT", "VENUE", "VIRUS", "WAGON", "WATCH", "WHEAT", "WORLD", "YACHT", "YEAST", "ZEBRA"
+        ];
+        words = [...new Set(words)]
+        
+        let randomNumber = Math.floor(Math.random() * words.length);
+        let answer = words[randomNumber]
+        words.splice(randomNumber,1)
+
+        const restartBtn = document.querySelector('.restart');
+        let title = document.querySelector('.title')
+
+        const letters = document.querySelectorAll(".letters");
+        let game = document.querySelector('.game')
+
+        const endMessage = document.getElementById("endMessage");
+        const endText = document.getElementById("endText");
+        const closer = document.getElementById("closeBtn");
+
+        let begin = 0
+        let end = 5
+        let count = 0
+        let currentIndex = 0;
+        let permission = true
+
+        const modal = document.getElementById('modal');
+        const closeBtn = document.querySelector('.close');
+        const aboutBtn = document.querySelector('.about')
+
+        aboutBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        closer.addEventListener('click', () => {
+            endMessage.style.display = "none";
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (
+                e.ctrlKey && (e.key === "u" || e.key === "U") ||
+                e.key === "F12"
+            ) {
+                e.preventDefault();
+                alert("Source code protected!");
+            }
+            if (!permission) {
+                return;
+            }
+            const key = e.key;
+
+            if (key.length === 1 && key.match(/[a-z]/i)) {
+                if (currentIndex < letters.length && currentIndex < end) {
+                    letters[currentIndex].textContent = key.toUpperCase();
+
+                    currentIndex++;
+                }
+            }
+            if (key === 'Backspace' && !(letters[currentIndex - 1].style.backgroundColor == 'darkred' || letters[currentIndex - 1].style.backgroundColor == 'darkgreen' || letters[currentIndex - 1].style.backgroundColor == 'orange')) {
+                letters[currentIndex - 1].textContent = ''
+                currentIndex--
+            }
+            let emptyCell = false
+            if (key === 'Enter') {
+                for (let i = 0; i < 5; i++) {
+                    if (letters[begin + i].textContent == '') {
+                        endMessage.className = "popup loss";
+                        endText.textContent = `Bo'sh katak qoldirdingiz!`;
+                        endMessage.style.display = "block";
+                        emptyCell = true
+                        break;
+                    }
+                }
+                if (!emptyCell) {
+                    count++
+                    let correctCount = 0
+                    for (let i = 0; i < 5; i++) {
+                        if (answer[i] === letters[begin + i].textContent) {
+                            letters[begin + i].style.backgroundColor = 'darkgreen'
+                            correctCount++
+                        }
+                        else if (answer.includes(letters[begin + i].textContent)) {
+                            letters[begin + i].style.backgroundColor = 'orange'
+                        }
+                        else if (!(answer.includes(letters[begin + i].textContent))) {
+                            letters[begin + i].style.backgroundColor = 'darkred'
+                        }
+                    }
+                    begin += 5
+                    end += 5
+                    currentIndex = end - 5
+                    if (correctCount == 5) {
+                        permission = false
+                        endMessage.className = "popup win";
+                        endText.textContent = "🎉 Tabriklayman! Siz yutdingiz! 🎉";
+                        endMessage.style.display = "block";
+                    }
+
+                    if (count == 6 && permission == true) {
+                        endMessage.className = "popup loss";
+                        endText.textContent = `😞 Afsuski, siz yutqazdingiz! To'g'ri so'z: '${answer}' edi.`;
+                        endMessage.style.display = "block";
+                    }
+                }
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            location.reload()
+        });
+    </script>
+</body>
+
+</html>

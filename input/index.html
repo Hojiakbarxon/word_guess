@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Save Input (localStorage)</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 id="#h2">Auto Save Input</h2>
+    <input type="text" id="nameInput" placeholder="Type your name..." />
+
+    <script>
+        const input = document.getElementById("nameInput");
+
+        // 1️⃣ Load saved value on page load
+        const savedValue = localStorage.getItem("savedName");
+        if (savedValue !== null) {
+            input.value = savedValue;
+        }
+
+        // 2️⃣ Save value automatically while typing
+        input.addEventListener("input", () => {
+            localStorage.setItem("savedName", input.value);
+            const text = document.getElementById('h2')
+            text.textContent(savedName)
+        });
+
+    </script>
+
+</body>
+</html>
